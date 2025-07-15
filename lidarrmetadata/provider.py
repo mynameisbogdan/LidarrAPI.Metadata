@@ -294,6 +294,10 @@ class ArtistOverviewMixin(MixinBase):
     def get_artist_overview(self, artist_id):
         pass
 
+    @abc.abstractmethod
+    def is_enabled(self):
+        pass
+
 
 class ArtistArtworkMixin(MixinBase):
     """
@@ -307,6 +311,10 @@ class ArtistArtworkMixin(MixinBase):
         :param artist_id: ID of artist
         :return: List of results
         """
+        pass
+
+    @abc.abstractmethod
+    def is_enabled(self):
         pass
 
 
@@ -324,6 +332,9 @@ class AlbumArtworkMixin(MixinBase):
         """
         pass
 
+    @abc.abstractmethod
+    def is_enabled(self):
+        pass
 
 class AlbumNameSearchMixin(MixinBase):
     """
@@ -541,7 +552,11 @@ class TheAudioDbProvider(HttpProvider,
         self._api_key = api_key
         self._base_url = base_url
         self.use_https = use_https
-        
+
+    def is_enabled(self):
+        # Exclude test keys as they don't support mbid lookups.
+        return bool(self._api_key and self._api_key.strip() and self._api_key.strip() not in {'1', '2'})
+
     def build_url(self, mbid):
         """
         Builds query url
@@ -674,6 +689,9 @@ class FanArtTvProvider(HttpProvider,
         
         ## dummy value for initialization, will be picked up from redis later on
         self._last_cache_invalidation = time.time() - 60 * 60 * 24
+
+    def is_enabled(self):
+        return bool(self._api_key and self._api_key.strip())
 
     async def get_artist_images(self, artist_id):
         
@@ -1345,6 +1363,9 @@ class WikipediaProvider(HttpProvider, ArtistOverviewMixin):
             'hu', 'id', 'lt', 'lv', 'no', 'ro', 'sk', 'sl', 'tr', 'uk',
             'vi', 'zh'
         )
+
+    def is_enabled(self):
+        return True
         
     async def get_artist_overview(self, url, ignore_cache=False):
         

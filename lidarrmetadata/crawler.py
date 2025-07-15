@@ -71,6 +71,10 @@ async def update_fanart(count = 500, max_ttl = 60 * 60):
             limiter=limit.NullRateLimiter()
         )
 
+        if not fanart_provider.is_enabled():
+            logger.info(f"FanArtTvProvider is disabled")
+            return
+
         while True:
             keys = await util.FANART_CACHE.get_stale(count, provider.utcnow() + timedelta(seconds = max_ttl))
             logger.debug(f"Got {len(keys)} stale fanart items to refresh")
@@ -97,6 +101,10 @@ async def update_tadb(count = 500, max_ttl = 60 * 60):
             session=session, 
             limiter=limit.NullRateLimiter()
         )
+
+        if not tadb_provider.is_enabled():
+            logger.info(f"TheAudioDbProvider is disabled")
+            return
 
         while True:
             keys = await util.TADB_CACHE.get_stale(count, provider.utcnow() + timedelta(seconds = max_ttl))

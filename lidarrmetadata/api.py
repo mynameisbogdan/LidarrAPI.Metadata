@@ -49,7 +49,7 @@ async def get_overview(links, mbid=None):
 
     overview = ''
     expiry = provider.utcnow() + timedelta(days=365)
-    overview_providers = provider.get_providers_implementing(provider.ArtistOverviewMixin)    
+    overview_providers = [p for p in provider.get_providers_implementing(provider.ArtistOverviewMixin) if p.is_enabled()]
 
     if overview_providers:
         wikidata_link = next(filter(
@@ -120,7 +120,7 @@ async def get_artist_info_multi(mbids):
     start = timer()
 
     artist_providers = provider.get_providers_implementing(provider.ArtistByIdMixin)
-    artist_art_providers = provider.get_providers_implementing(provider.ArtistArtworkMixin)
+    artist_art_providers = [p for p in provider.get_providers_implementing(provider.ArtistArtworkMixin) if p.is_enabled()]
     
     if not artist_providers:
         # 500 error if we don't have an artist provider since it's essential
@@ -225,8 +225,8 @@ async def get_release_group_info_multi(mbids):
     start = timer()
     
     release_group_providers = provider.get_providers_implementing(provider.ReleaseGroupByIdMixin)
-    album_art_providers = provider.get_providers_implementing(provider.AlbumArtworkMixin)
-    
+    album_art_providers = [p for p in provider.get_providers_implementing(provider.AlbumArtworkMixin) if p.is_enabled()]
+
     if not release_group_providers:
         raise MissingProviderException('No album provider available')
 
