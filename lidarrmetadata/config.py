@@ -439,7 +439,7 @@ class DefaultConfig(six.with_metaclass(ConfigMeta, ConfigBase)):
     FANART_API_DELAY_SECONDS = 8 * 24 * 60 * 60
 
     # TADB API credentials
-    TADB_KEY = '1'
+    TADB_KEY = ''
 
     # Port to use
     HTTP_PORT = 5001
