@@ -1,11 +1,9 @@
 LidarrAPI.Metadata
 ==================
 
-.. image:: https://dev.azure.com/Lidarr/Lidarr/_apis/build/status/lidarr.LidarrAPI.Metadata?branchName=develop
-    :target: https://dev.azure.com/Lidarr/Lidarr/_build/latest?definitionId=3&branchName=develop
-.. image:: https://api.codacy.com/project/badge/Grade/80dc9be416934129a9959b4620522e8f
-   :alt: Codacy Badge
-   :target: https://www.codacy.com/app/Lidarr/LidarrAPI.Metadata?utm_source=github.com&utm_medium=referral&utm_content=lidarr/LidarrAPI.Metadata&utm_campaign=badger
+.. image:: https://github.com/mynameisbogdan/LidarrAPI.Metadata/actions/workflows/build.yml/badge.svg
+    :target: https://github.com/mynameisbogdan/LidarrAPI.Metadata/actions/workflows/build.yml
+
 
 This hosts the custom metadata API and resources Lidarr relies on.
 
