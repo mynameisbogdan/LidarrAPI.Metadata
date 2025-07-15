@@ -439,7 +439,7 @@ class DefaultConfig(six.with_metaclass(ConfigMeta, ConfigBase)):
     FANART_API_DELAY_SECONDS = 8 * 24 * 60 * 60
 
     # TADB API credentials
-    TADB_KEY = '1'
+    TADB_KEY = ''
 
     # Port to use
     HTTP_PORT = 5001
@@ -450,8 +450,8 @@ class DefaultConfig(six.with_metaclass(ConfigMeta, ConfigBase)):
 
     # Spotify app details
     SPOTIFY_REDIRECT_URL = ''
-    SPOTIFY_ID = 'replaceme'
-    SPOTIFY_SECRET = 'replaceme'
+    SPOTIFY_ID = ''
+    SPOTIFY_SECRET = ''
     SPOTIFY_MATCH_MIN_RATIO = 0.8
 
     # Whether or not running in production

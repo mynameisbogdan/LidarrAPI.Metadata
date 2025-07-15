@@ -294,6 +294,10 @@ class ArtistOverviewMixin(MixinBase):
     def get_artist_overview(self, artist_id):
         pass
 
+    @abc.abstractmethod
+    def is_enabled(self):
+        pass
+
 
 class ArtistArtworkMixin(MixinBase):
     """
@@ -307,6 +311,10 @@ class ArtistArtworkMixin(MixinBase):
         :param artist_id: ID of artist
         :return: List of results
         """
+        pass
+
+    @abc.abstractmethod
+    def is_enabled(self):
         pass
 
 
@@ -324,6 +332,9 @@ class AlbumArtworkMixin(MixinBase):
         """
         pass
 
+    @abc.abstractmethod
+    def is_enabled(self):
+        pass
 
 class AlbumNameSearchMixin(MixinBase):
     """
@@ -380,7 +391,11 @@ class SpotifyIdMixin(MixinBase):
     """
     Details for a spotify id
     """
-    
+
+    @abc.abstractmethod
+    def is_enabled(self):
+        pass
+
     @abc.abstractmethod
     def album_from_artist(self, artist_id):
         pass
@@ -541,7 +556,11 @@ class TheAudioDbProvider(HttpProvider,
         self._api_key = api_key
         self._base_url = base_url
         self.use_https = use_https
-        
+
+    def is_enabled(self):
+        # Exclude test keys as they don't support mbid lookups.
+        return bool(self._api_key and self._api_key.strip() and self._api_key.strip() not in {'1', '2'})
+
     def build_url(self, mbid):
         """
         Builds query url
@@ -674,6 +693,9 @@ class FanArtTvProvider(HttpProvider,
         
         ## dummy value for initialization, will be picked up from redis later on
         self._last_cache_invalidation = time.time() - 60 * 60 * 24
+
+    def is_enabled(self):
+        return bool(self._api_key and self._api_key.strip())
 
     async def get_artist_images(self, artist_id):
         
@@ -1297,11 +1319,21 @@ class SpotifyProvider(Provider,
 
     def __init__(self, client_id, client_secret):
         super(SpotifyProvider, self).__init__()
-        
-        client_credentials_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
-        self.spotify = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+
+        self._client_id = client_id
+        self._client_secret = client_secret
+
+        if self.is_enabled():
+            client_credentials_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
+            self.spotify = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+
+    def is_enabled(self):
+        return bool(self._client_id and self._client_id.strip() and self._client_secret and self._client_secret.strip())
 
     def album_from_artist(self, artist_id):
+        if not self.is_enabled():
+            return None
+
         top_tracks = self.spotify.artist_top_tracks(artist_id, country='US')
 
         if not top_tracks['tracks']:
@@ -1316,6 +1348,9 @@ class SpotifyProvider(Provider,
                 'AlbumSpotifyId': album['id']}
 
     def album(self, album_id):
+        if not self.is_enabled():
+            return None
+
         album = self.spotify.album(album_id)
         artist = album['artists'][0]
         
@@ -1345,6 +1380,9 @@ class WikipediaProvider(HttpProvider, ArtistOverviewMixin):
             'hu', 'id', 'lt', 'lv', 'no', 'ro', 'sk', 'sl', 'tr', 'uk',
             'vi', 'zh'
         )
+
+    def is_enabled(self):
+        return True
         
     async def get_artist_overview(self, url, ignore_cache=False):
         
