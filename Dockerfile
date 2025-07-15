@@ -4,26 +4,27 @@ ARG UID=1000
 ARG COMMIT_HASH=''
 ARG GIT_BRANCH=''
 
-ENV COMMIT_HASH $COMMIT_HASH
-ENV GIT_BRANCH $GIT_BRANCH
+ENV COMMIT_HASH=$COMMIT_HASH
+ENV GIT_BRANCH=$GIT_BRANCH
 
 WORKDIR /metadata
 COPY . /metadata
 
 ENV POETRY_VIRTUALENVS_CREATE=false \
-        POETRY_NO_INTERACTION=1 \
-        POETRY_CACHE_DIR='/var/cache/pypoetry' \
-        POETRY_HOME='/usr/local'
+    POETRY_NO_INTERACTION=1 \
+    POETRY_CACHE_DIR='/var/cache/pypoetry' \
+    POETRY_HOME='/usr/local'
 
-RUN apk update && \
-        apk add postgresql-libs && \
-        apk add --virtual .build-deps alpine-sdk musl-dev postgresql-dev && \
-        pip --disable-pip-version-check --no-cache-dir install poetry && \
-        poetry install && \
-        apk --purge del .build-deps
+RUN set -x && \
+    apk update && \
+    apk add postgresql-libs && \
+    apk add --virtual .build-deps alpine-sdk musl-dev postgresql-dev && \
+    pip --disable-pip-version-check --no-cache-dir install poetry && \
+    poetry install && \
+    apk --purge del .build-deps && \
+    rm -vrf /var/cache/apk/*
 
 RUN adduser --system -u $UID metadata
-
 USER metadata
 
 ENTRYPOINT ["lidarr-metadata-server"]
