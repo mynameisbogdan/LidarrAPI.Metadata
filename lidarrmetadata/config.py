@@ -489,6 +489,7 @@ class DefaultConfig(six.with_metaclass(ConfigMeta, ConfigBase)):
     
     # Cloudflare details for invalidating cache on update
     CLOUDFLARE_ZONE_ID = ''
+    CLOUDFLARE_API_TOKEN = ''
     CLOUDFLARE_AUTH_EMAIL = ''
     CLOUDFLARE_AUTH_KEY = ''
     CLOUDFLARE_URL_BASE = ''
