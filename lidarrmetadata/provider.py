@@ -515,11 +515,11 @@ class HttpProvider(Provider,
             logger.debug(f'Task cancelled {url}')
             raise
         except asyncio.TimeoutError:
-            logger.debug(f'Timeout for {self._name}', extra=dict(url=url))
+            logger.warning(f'Timeout for {self._name}', extra=dict(url=url))
             self._count_request('timeout')
             raise ProviderUnavailableException(f'{self._name} timeout')
         except Exception as error:
-            logger.error(f'Non-aiohttp exceptions occured: {getattr(error, "__dict__", {})}', extra=dict(error = repr(error)))
+            logger.error(f'Non-aiohttp exceptions occurred: {getattr(error, "__dict__", {})}', extra=dict(error = repr(error)))
             raise
         
     async def get_with_limit(self, url, raise_on_http_error=True, **kwargs):
