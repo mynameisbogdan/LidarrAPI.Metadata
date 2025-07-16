@@ -676,10 +676,17 @@ async def invalidate_cloudflare(files):
         return
     
     url = f'https://api.cloudflare.com/client/v4/zones/{zoneid}/purge_cache'
-    headers = {'X-Auth-Email': app.config['CLOUDFLARE_AUTH_EMAIL'],
-               'X-Auth-Key': app.config['CLOUDFLARE_AUTH_KEY'],
-               'Content-Type': 'application/json'}
-    
+
+    headers = {'Content-Type': 'application/json'}
+
+    if app.config['CLOUDFLARE_API_TOKEN']:
+        headers['Authorization'] = 'Bearer {0}'.format(app.config['CLOUDFLARE_API_TOKEN'])
+    elif app.config['CLOUDFLARE_AUTH_EMAIL'] and app.config['CLOUDFLARE_AUTH_KEY']:
+        headers['X-Auth-Email'] = '{0}'.format(app.config['CLOUDFLARE_AUTH_EMAIL'])
+        headers['X-Auth-Key'] = '{0}'.format(app.config['CLOUDFLARE_AUTH_KEY'])
+    else:
+        raise ValueError('Credentials for cloudflare are not defined')
+
     async with aiohttp.ClientSession() as session:
         # cloudflare only accepts 30 files at a time
         for i in range(0, len(files), 30):
