@@ -1398,6 +1398,8 @@ class WikipediaProvider(HttpProvider, ArtistOverviewMixin):
         
         try:
             summary = await self.wikidata_get_summary_from_url(url) if 'wikidata' in url else await self.wikipedia_get_summary_from_url(url)
+            summary = summary.strip()
+
             ttl = CONFIG.CACHE_TTL['wikipedia']
             await util.WIKI_CACHE.set(url, summary, ttl=ttl)
             return summary, utcnow() + timedelta(seconds = ttl)
