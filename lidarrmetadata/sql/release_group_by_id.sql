@@ -31,18 +31,11 @@ SELECT
          WHERE rgstj.release_group = release_group.id
          ORDER BY name ASC
       ) AS SecondaryTypes,
-      COALESCE(
-        make_date(
-          release_group_meta.first_release_date_year,
-          release_group_meta.first_release_date_month,
-          release_group_meta.first_release_date_day
-        ),
-        make_date(
-          COALESCE(release_group_meta.first_release_date_year, 1),
-          COALESCE(release_group_meta.first_release_date_month, 1),
-          COALESCE(release_group_meta.first_release_date_day, 1)
-        )
-      )as ReleaseDate,
+      make_date(
+        release_group_meta.first_release_date_year,
+        COALESCE(release_group_meta.first_release_date_month, 1),
+        COALESCE(release_group_meta.first_release_date_day, 1)
+      ) as ReleaseDate,
       artist.gid AS ArtistId,
       array(
 	SELECT DISTINCT
@@ -56,14 +49,14 @@ SELECT
 	   AND artist_credit_name.position = 0
 
          UNION
-               
+
         SELECT
           artist.gid
           FROM artist
                  JOIN artist_credit_name ON artist_credit_name.artist = artist.id
          WHERE artist_credit_name.artist_credit = release_group.artist_credit
            AND artist_credit_name.position = 0
-      ) AS ArtistIds,	
+      ) AS ArtistIds,
       json_build_object(
         'Count', COALESCE(release_group_meta.rating_count, 0),
         'Value', release_group_meta.rating::decimal / 10
@@ -109,16 +102,13 @@ SELECT
               release.comment AS Disambiguation,
               release_status.name AS Status,
               (
-                SELECT 
-                  COALESCE(
-                    MIN(make_date(date_year, date_month, date_day)),
-                    MIN(make_date(COALESCE(date_year, 1), COALESCE(date_month, 1), COALESCE(date_day, 1)))
-                    )
+                SELECT
+                  MIN(make_date(date_year, COALESCE(date_month, 1), COALESCE(date_day, 1)))
                   FROM (
                     SELECT date_year, date_month, date_day
                       FROM release_country
                      WHERE release_country.release = release.id
-                           
+
                      UNION
 
                     SELECT date_year, date_month, date_day
@@ -182,7 +172,7 @@ SELECT
                        AND recording.video = FALSE
                        AND track.is_data_track = FALSE
                   ) track_data
-              ) AS Tracks                                                                                     
+              ) AS Tracks
               FROM release
                      JOIN release_status ON release_status.id = release.status
              WHERE release.release_group = release_group.id
