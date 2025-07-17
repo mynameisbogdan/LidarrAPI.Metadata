@@ -1,13 +1,11 @@
 import abc
 import collections
-import contextlib
 import datetime
+import importlib.resources
 from datetime import timedelta
 import time
 import pytz
-import imp
 import logging
-import pkg_resources
 import re
 import six
 from timeit import default_timer as timer
@@ -20,8 +18,6 @@ import asyncpg
 import json
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
-
-import dateutil.parser
 
 from lidarrmetadata.config import get_config
 from lidarrmetadata import limit
@@ -1275,7 +1271,7 @@ class MusicbrainzDbProvider(Provider,
         :param kwargs: Keyword args to pass to cursor.execute
         :return: List of dict with column: value results
         """
-        filename = pkg_resources.resource_filename('lidarrmetadata.sql', sql_file)
+        filename = importlib.resources.files('lidarrmetadata.sql') / sql_file
 
         with open(filename, 'r') as sql:
             return await self.map_query(sql.read(), *args)
