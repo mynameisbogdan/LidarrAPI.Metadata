@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM docker.io/library/python:3.9-alpine3.22
+FROM docker.io/library/python:3.11-alpine3.22
 
 ARG COMMIT_HASH=''
 ARG GIT_BRANCH=''
@@ -23,9 +23,8 @@ RUN set -x && \
       gcc \
       make \
       musl-dev && \
-    pip --no-cache-dir install --upgrade pip && \
-    pip --no-cache-dir install --upgrade setuptools && \
-    pip --disable-pip-version-check --no-cache-dir install poetry==2.1.3 && \
+    pip --no-cache-dir install --upgrade pip setuptools && \
+    pip --disable-pip-version-check --no-cache-dir install "poetry~=2.0" && \
     poetry install --only=main && \
     apk --purge del .build-deps && \
     rm -rf \
