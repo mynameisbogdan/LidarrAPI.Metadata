@@ -683,6 +683,8 @@ async def invalidate_cloudflare(files):
     else:
         raise ValueError('Credentials for cloudflare are not defined')
 
+    logger.info(f"In process of invalidating {len(files)} cached pages")
+
     async with aiohttp.ClientSession() as session:
         # cloudflare only accepts 30 files at a time
         for i in range(0, len(files), 30):
