@@ -73,7 +73,7 @@ class RedisRateLimiter(QueueRateLimiter):
 
         # Set up expiration if we put the first item in the queue
         if items == 1:
-            expire_time = (self.queue_size - 1) * self.time_delta / 1000
+            expire_time = int((self.queue_size - 1) * self.time_delta / 1000)
             self._client.expire(self._key, expire_time)
 
 

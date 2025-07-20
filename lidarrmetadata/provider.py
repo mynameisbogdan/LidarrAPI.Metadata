@@ -510,14 +510,14 @@ class HttpProvider(Provider,
         except (aiohttp.ClientError, aiohttp.http_exceptions.HttpProcessingError) as error:
             logger.error(f'aiohttp exception {getattr(error, "status", None)}',
                          extra = dict(error_message=getattr(error, "message", None), error=repr(error)))
-            raise ProviderUnavailableException(f'{self._name} aiohttp exception')
+            raise ProviderUnavailableException(f'{self._name} aiohttp exception') from error
         except asyncio.CancelledError:
             logger.debug(f'Task cancelled {url}')
             raise
-        except asyncio.TimeoutError:
+        except asyncio.TimeoutError as error:
             logger.warning(f'Timeout for {self._name}', extra=dict(url=url))
             self._count_request('timeout')
-            raise ProviderUnavailableException(f'{self._name} timeout')
+            raise ProviderUnavailableException(f'{self._name} timeout') from error
         except Exception as error:
             logger.error(f'Non-aiohttp exceptions occurred: {getattr(error, "__dict__", {})}', extra=dict(error = repr(error)))
             raise
@@ -526,9 +526,10 @@ class HttpProvider(Provider,
         try:
             with self._limiter.limited():
                 return await self.get(url, raise_on_http_error, **kwargs)
-        except limit.RateLimitedError:
-            logger.debug(f'{self._name} request rate limited')
+        except limit.RateLimitedError as error:
+            logger.warning(f'{self._name} request rate limited', extra=dict(url=url))
             self._count_request('ratelimit')
+            raise ProviderUnavailableException(f'{self._name} request rate limited') from error
 
 class TheAudioDbProvider(HttpProvider,
                          ArtistOverviewMixin,
