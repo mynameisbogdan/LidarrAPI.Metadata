@@ -630,7 +630,7 @@ async def invalidate_cache():
     
     ## this is used as a prefix in various places to make sure
     ## we keep cache for different metadata versions separate
-    base_url = app.config['CLOUDFLARE_URL_BASE'] + '/' +  app.config['ROOT_PATH'].lstrip('/').rstrip('/')
+    base_url = app.config['CLOUDFLARE_URL_BASE'] + app.config['ROOT_PATH'].rstrip('/')
     
     ## Use a cache key to make sure we don't trigger this in parallel
     invalidation_in_progress_key = base_url + 'CacheInvalidationInProgress'
@@ -690,7 +690,10 @@ async def invalidate_cloudflare(files):
     zoneid = app.config['CLOUDFLARE_ZONE_ID']
     if not zoneid:
         return
-    
+
+    if not app.config['CLOUDFLARE_URL_BASE']:
+        raise ValueError('CLOUDFLARE_URL_BASE is not defined')
+
     url = f'https://api.cloudflare.com/client/v4/zones/{zoneid}/purge_cache'
 
     headers = {'Content-Type': 'application/json'}
