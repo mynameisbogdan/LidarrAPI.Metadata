@@ -34,6 +34,8 @@ logger.info('Have app logger')
 app = Quart(__name__)
 app.config.from_object(config.get_config())
 
+logger.info(f"Running LidarrMetadataAPI v{lidarrmetadata.__version__}")
+
 if app.config['SENTRY_DSN']:
     if app.config['SENTRY_REDIS_HOST'] is not None:
         processor = util.SentryRedisTtlProcessor(redis_host=app.config['SENTRY_REDIS_HOST'],
