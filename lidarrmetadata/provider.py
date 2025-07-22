@@ -1256,7 +1256,7 @@ class MusicbrainzDbProvider(Provider,
     async def get_release_groups_by_artist(self, artist_id):
         results = await self.query_from_file('release_group_search_artist_mbid.sql', artist_id)
         
-        logger.debug("got artist release groups")
+        logger.debug(f"got release groups for artist {artist_id}")
 
         return [{'Id': result['gid'],
                  'OldIds': result['oldids'],
