@@ -196,10 +196,24 @@ async def refresh_artist_route(mbid):
     if uuid_validation_response:
         return uuid_validation_response
 
+    include_albums = request.args.get('include_albums', False)
+    albums = []
+
+    if include_albums:
+        albums = [album['Id'] for album in await api.get_artist_albums(mbid)]
+
+        await asyncio.gather(
+            util.ALBUM_CACHE.multi_set([(album, None) for album in albums], ttl=0, timeout=None)
+        )
+
     await util.ARTIST_CACHE.set(mbid, None)
-    base_url = app.config['CLOUDFLARE_URL_BASE'] + '/' +  app.config['ROOT_PATH'].lstrip('/').rstrip('/')
-    await invalidate_cloudflare([f'{base_url}/artist/{mbid}'])
-    return jsonify(success=True)
+
+    base_url = app.config['CLOUDFLARE_URL_BASE'] + app.config['ROOT_PATH'].rstrip('/')
+    invalidated = ([f'{base_url}/artist/{mbid}'] + [f'{base_url}/album/{album}' for album in albums])
+
+    await invalidate_cloudflare(invalidated)
+
+    return jsonify({'success': True, 'invalidated': len(invalidated)})
 
 
 @app.route('/album/<mbid>', methods=['GET'])
