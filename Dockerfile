@@ -1,30 +1,38 @@
-FROM python:3.9-alpine
+# syntax=docker/dockerfile:1
 
-ARG UID=1000
+FROM docker.io/library/python:3.9-alpine3.22
+
 ARG COMMIT_HASH=''
 ARG GIT_BRANCH=''
 
-ENV COMMIT_HASH=$COMMIT_HASH
-ENV GIT_BRANCH=$GIT_BRANCH
-
-WORKDIR /metadata
-COPY . /metadata
+ENV COMMIT_HASH=$COMMIT_HASH \
+    GIT_BRANCH=$GIT_BRANCH
 
 ENV POETRY_VIRTUALENVS_CREATE=false \
     POETRY_NO_INTERACTION=1 \
     POETRY_CACHE_DIR='/var/cache/pypoetry' \
     POETRY_HOME='/usr/local'
 
-RUN set -x && \
-    apk update && \
-    apk add postgresql-libs && \
-    apk add --virtual .build-deps alpine-sdk musl-dev postgresql-dev && \
-    pip --disable-pip-version-check --no-cache-dir install poetry && \
-    poetry install && \
-    apk --purge del .build-deps && \
-    rm -vrf /var/cache/apk/*
+USER root
 
-RUN adduser --system -u $UID metadata
-USER metadata
+WORKDIR /metadata
+COPY --chown=0:0 --chmod=755 . /metadata
+
+RUN set -x && \
+    apk add -U --upgrade --virtual .build-deps \
+      gcc \
+      make \
+      musl-dev && \
+    pip --no-cache-dir install --upgrade pip && \
+    pip --no-cache-dir install --upgrade setuptools && \
+    pip --disable-pip-version-check --no-cache-dir install poetry==2.1.3 && \
+    poetry install --only=main && \
+    apk --purge del .build-deps && \
+    rm -rf \
+      /var/cache/apk/* \
+      /var/cache/pypoetry/* \
+      /tmp/*
+
+USER nobody:nogroup
 
 ENTRYPOINT ["lidarr-metadata-server"]
