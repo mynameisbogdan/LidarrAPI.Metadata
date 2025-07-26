@@ -8,6 +8,10 @@ indent_size = 2
 end_of_line = lf
 charset = utf-8
 
+[{Dockerfile*,**.yml}]
+indent_size = 4
+trim_trailing_whitespace = true
+
 [*.md]
 indent_size = 4
 trim_trailing_whitespace = false
