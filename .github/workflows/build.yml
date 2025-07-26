@@ -65,8 +65,8 @@ jobs:
             org.opencontainers.image.authors=${{ github.repository_owner }}
             org.opencontainers.image.vendor=${{ github.repository_owner }}
           tags: |
-            type=raw,value=${{ env.APP_VERSION }},prefix=v
             type=raw,value=${{ env.APP_VERSION }}.${{ github.run_number }},prefix=v
+            type=raw,value=${{ env.APP_VERSION }},prefix=v
             type=ref,event=branch
           flavor: |
             latest=false
