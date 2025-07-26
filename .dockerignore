@@ -30,3 +30,13 @@ appveyor.yml
 # Other stuff
 /.git
 /.tox
+
+.DS_Store
+.dockerignore
+.github/
+.idea/
+rewrite/
+tests/
+.editorconfig
+.env*
+.gitignore
