@@ -64,6 +64,7 @@ jobs:
           labels: |
             org.opencontainers.image.authors=${{ github.repository_owner }}
             org.opencontainers.image.vendor=${{ github.repository_owner }}
+            org.opencontainers.image.version=${{ env.APP_VERSION }}.${{ github.run_number }}
           tags: |
             type=raw,value=${{ env.APP_VERSION }},prefix=v
             type=raw,value=${{ env.APP_VERSION }}.${{ github.run_number }},prefix=v
