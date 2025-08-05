@@ -3,15 +3,16 @@ Script to expire TADB cache entries. Can be adapted for other cache expiration t
 """
 
 import asyncio
+import os
 import pickle
 
 import asyncpg
 
-HOST = "127.0.0.1"
-PORT = 5432
-USER = ""
-PASSWORD = ""
-DB = "lm_cache_db"
+DB_HOST = os.getenv('CACHE_DB_HOST', "127.0.0.1")
+DB_PORT = os.getenv('CACHE_DB_PORT', 5432)
+DB_USER = os.getenv('CACHE_DB_USER', "")
+DB_PASSWORD = os.getenv('CACHE_DB_PASSWORD', "")
+DB_NAME = os.getenv('CACHE_DB_NAME', "lm_cache_db")
 
 
 def decode_value(v):
@@ -23,13 +24,9 @@ def contains_tadb(v):
 
 
 async def main():
-    conn = await asyncpg.connect(f"postgresql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DB}")
+    conn = await asyncpg.connect(f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}")
 
-    results = conn.fetch(
-        """
-    SELECT key, value FROM artist;
-    """
-    )
+    results = conn.fetch("SELECT key, value FROM artist")
 
     to_expire = []
     for r in await results:
@@ -41,12 +38,7 @@ async def main():
 
     # WHERE IN evidently isn't supported, which is why the ANY($1::text[]) is needed
     # https://stackoverflow.com/questions/57926778/asyncpg-select-where-in-gives-postgressyntaxerror
-    deleted = await conn.execute(
-        """
-    DELETE FROM artist WHERE key = ANY($1::text[])
-    """,
-        to_expire,
-    )
+    deleted = await conn.execute("DELETE FROM artist WHERE key = ANY($1::text[])", to_expire)
 
     print("Expired", deleted)
 
