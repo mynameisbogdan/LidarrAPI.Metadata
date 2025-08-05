@@ -301,7 +301,7 @@ class DefaultConfig(six.with_metaclass(ConfigMeta, ConfigBase)):
         'redis': DAYS * 7,
         'fanart': DAYS * 30,
         'tadb': DAYS * 30,
-        'wikipedia': DAYS * 7
+        'wikipedia': DAYS * 30
     }
     
     CACHE_CONFIG = {
