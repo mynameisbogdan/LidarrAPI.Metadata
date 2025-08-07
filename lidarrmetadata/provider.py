@@ -799,8 +799,9 @@ class FanArtTvProvider(HttpProvider,
         logger.debug(url)
         
         try:
-            return await self.get(url, timeout=aiohttp.ClientTimeout(total=5))
+            updates = await self.get(url, timeout=aiohttp.ClientTimeout(total=5))
 
+            return updates if updates is not None else []
         except Exception as error:
             logger.error(f'Error getting fanart updates: {error}')
             return []
