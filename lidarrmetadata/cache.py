@@ -2,9 +2,7 @@
 Defines the custom redis cache backend which compresses pickle dumps
 """
 import functools
-import hashlib
 import logging
-import contextlib
 import zlib
 import asyncio
 import asyncpg

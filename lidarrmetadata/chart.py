@@ -10,7 +10,6 @@ from aiocache import cached
 from lidarrmetadata import api
 from lidarrmetadata import config
 from lidarrmetadata import provider
-from lidarrmetadata import util
 
 async def _parse_itunes_chart(URL, count):
     async with aiohttp.ClientSession() as session:
