@@ -32,6 +32,7 @@ concurrency:
 
 env:
   APP_VERSION: 0.4
+  REGISTRY_IMAGE: ghcr.io/${{ github.repository_owner }}/lidarrapi.metadata
 
 permissions:
   packages: write
@@ -40,7 +41,13 @@ jobs:
   build_docker:
     name: Build Docker Image
     if: ${{ ! github.event.repository.private }}
-    runs-on: 'ubuntu-latest'
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - linux/amd64
+          - linux/arm64
+    runs-on: ${{ startsWith(matrix.platform, 'linux/arm') && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -52,8 +59,6 @@ jobs:
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
-        with:
-          platforms: amd64
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -62,20 +67,13 @@ jobs:
         id: docker_meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ github.repository_owner }}/lidarrapi.metadata
+          images: ${{ env.REGISTRY_IMAGE }}
           labels: |
             org.opencontainers.image.authors=${{ github.repository_owner }}
             org.opencontainers.image.vendor=${{ github.repository_owner }}
-          tags: |
-            type=raw,value=${{ env.APP_VERSION }}.${{ github.run_number }},prefix=v
-            type=raw,value=${{ env.APP_VERSION }},prefix=v
-            type=ref,event=branch
-          flavor: |
-            latest=false
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
-        if: ${{ github.event_name != 'pull_request' }}
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -86,21 +84,82 @@ jobs:
         with:
           call: check
 
-      - name: Build and push
+      - name: Build and push by digest
         id: build
         uses: docker/build-push-action@v6
         with:
           context: .
-          platforms: linux/amd64
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.docker_meta.outputs.tags }}
+          platforms: ${{ matrix.platform }}
           labels: ${{ steps.docker_meta.outputs.labels }}
+          tags: ${{ env.REGISTRY_IMAGE }}
+          outputs: type=image,push-by-digest=true,name-canonical=true,push=true
           build-args: |
             GIT_BRANCH=${{ github.head_ref || github.ref_name }}
             COMMIT_HASH=${{ github.event.pull_request.head.sha || github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          provenance: false
 
-      - name: Generate build summary
-        if: ${{ github.event_name != 'pull_request' }}
+      - name: Export image digest
+        id: digest-prepare
         run: |
-          echo "### Image Build Summary" >> $GITHUB_STEP_SUMMARY
-          echo "**Successfully built and pushed image with tag:** \`v${{ env.APP_VERSION }}.${{ github.run_number }}@${{ steps.build.outputs.digest }}\`" >> $GITHUB_STEP_SUMMARY
+          mkdir -p ${{ runner.temp }}/digests
+          digest="${{ steps.build.outputs.digest }}"
+          echo "manifest-hash=${digest#sha256:}" >> "$GITHUB_OUTPUT"
+          touch "${{ runner.temp }}/digests/${digest#sha256:}"
+
+      - name: Upload digest
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-digests-${{ steps.digest-prepare.outputs.manifest-hash }}
+          path: ${{ runner.temp }}/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  docker_merge:
+    name: Publish docker multi-platform manifest
+    runs-on: ubuntu-latest
+    needs: build_docker
+    steps:
+      - name: Download digests
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ runner.temp }}/digests
+          pattern: docker-digests-*
+          merge-multiple: true
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker meta
+        id: docker_meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY_IMAGE }}
+          labels: |
+            org.opencontainers.image.authors=${{ github.repository_owner }}
+            org.opencontainers.image.vendor=${{ github.repository_owner }}
+          tags: |
+            type=raw,value=${{ env.APP_VERSION }}.${{ github.run_number }},prefix=v,enable=${{ github.event_name != 'pull_request' }}
+            type=raw,value=${{ env.APP_VERSION }},prefix=v,enable=${{ github.event_name != 'pull_request' }}
+            type=ref,event=branch
+            type=ref,event=pr
+          flavor: |
+            latest=false
+
+      - name: Create manifest list and push
+        working-directory: ${{ runner.temp }}/digests
+        run: |
+          docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+            $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
+
+      - name: Inspect image
+        run: |
+          docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ steps.docker_meta.outputs.version }}
