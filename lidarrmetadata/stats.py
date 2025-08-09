@@ -4,7 +4,6 @@ Utilities for sending stats
 
 import telegraf.client
 
-
 from lidarrmetadata.config import get_config
 
 CONFIG = get_config()
