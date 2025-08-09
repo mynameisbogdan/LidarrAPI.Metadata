@@ -6,13 +6,10 @@ import abc
 import time
 import logging
 
-import functools
 import redis
 from aiocache import caches
-from aiocache.backends.redis import RedisCache
 
 from lidarrmetadata import config
-from lidarrmetadata import cache
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())

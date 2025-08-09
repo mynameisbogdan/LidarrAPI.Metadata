@@ -1,17 +1,11 @@
-import os
 import uuid
 import functools
 import asyncio
 
-import redis
-import datetime
 from datetime import timedelta
-import time
 import logging
-import aiohttp
 from timeit import default_timer as timer
 
-import lidarrmetadata
 from lidarrmetadata import config
 from lidarrmetadata import provider
 from lidarrmetadata import util
