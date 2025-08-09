@@ -63,7 +63,7 @@ async def update_fanart(count = 500, max_ttl = 60 * 60):
     # Don't make these count towards rate limiting.
     async with aiohttp.ClientSession(
             timeout = aiohttp.ClientTimeout(sock_read = 2), 
-            connector = aiohttp.TCPConnector(limit_per_host=10)
+            connector = aiohttp.TCPConnector(limit_per_host=CONFIG.FANART_CONNECTIONS)
     ) as session:
         fanart_provider = provider.FanArtTvProvider(
             CONFIG.FANART_KEY, 
