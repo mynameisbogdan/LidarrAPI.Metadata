@@ -12,7 +12,6 @@ from sentry_sdk.integrations.flask import FlaskIntegration
 import datetime
 from datetime import timedelta
 from dateutil import parser
-import time
 import logging
 import aiohttp
 from timeit import default_timer as timer

@@ -1,6 +1,5 @@
 import argparse
 import asyncio
-import datetime
 from datetime import timedelta
 import logging
 from timeit import default_timer as timer
@@ -9,7 +8,6 @@ import sys
 import aiohttp
 import sentry_sdk
 
-import lidarrmetadata
 from lidarrmetadata.config import get_config
 from lidarrmetadata import provider
 from lidarrmetadata import util
