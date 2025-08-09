@@ -1,9 +1,5 @@
-import multiprocessing
-import os
-
 import gunicorn.app.base
 
-import lidarrmetadata
 from lidarrmetadata.app import app
 from lidarrmetadata.config import get_config
 
