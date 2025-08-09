@@ -6,9 +6,10 @@ on:
     branches:
       - 'develop'
     paths-ignore:
+      - '.github/dependabot.ya?ml'
       - '.dockerignore'
       - '.editorconfig'
-      - 'docker-compose.yml'
+      - 'docker-compose.ya?ml'
       - 'Makefile'
       - 'LICENSE'
       - '**.md'
@@ -17,9 +18,10 @@ on:
     branches:
       - 'develop'
     paths-ignore:
+      - '.github/dependabot.ya?ml'
       - '.dockerignore'
       - '.editorconfig'
-      - 'docker-compose.yml'
+      - 'docker-compose.ya?ml'
       - 'Makefile'
       - 'LICENSE'
       - '**.md'
