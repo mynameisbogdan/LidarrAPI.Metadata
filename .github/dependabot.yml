@@ -1,9 +1,23 @@
 version: 2
+
 updates:
-  # Enable version updates for npm
-  - package-ecosystem: "pip"
-    # Look for `package.json` and `lock` files in the `root` directory
+  - package-ecosystem: "github-actions"
     directory: "/"
-    # Check the npm registry for updates every day (weekdays)
     schedule:
-      interval: "daily"
+      interval: "weekly"
+    groups:
+      github:
+        patterns:
+          - "actions/*"
+      docker:
+        patterns:
+          - "docker/*"
+
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      pip:
+        patterns:
+          - "*"
