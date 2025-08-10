@@ -413,7 +413,7 @@ class DefaultConfig(six.with_metaclass(ConfigMeta, ConfigBase)):
     DEBUG = False
 
     # Enable sending stats
-    ENABLE_STATS = True
+    ENABLE_STATS = False
 
     # External request parameters
     # Class of limiter
