@@ -31,8 +31,9 @@ def main():
 
     options = {
         'bind': '0.0.0.0:{port}'.format(port=config.HTTP_PORT),
-        'log_level': 'debug',
-        'workers': 1,
+        'loglevel': 'debug',
+        'workers': 2,
+        'threads': 2,
         'worker_class': 'uvicorn.workers.UvicornWorker'
     }
 
