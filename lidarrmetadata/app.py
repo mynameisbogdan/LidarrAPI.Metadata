@@ -4,7 +4,7 @@ import functools
 import asyncio
 
 from quart import Quart, abort, make_response, request, jsonify, redirect, url_for
-from quart.exceptions import HTTPStatusException
+from werkzeug.exceptions import HTTPException
 
 import redis
 import sentry_sdk
@@ -102,9 +102,9 @@ def handle_error(e):
     sentry_sdk.capture_exception(e)
     return jsonify(error='Internal server error'), 500
 
-@app.errorhandler(HTTPStatusException)
+@app.errorhandler(HTTPException)
 async def handle_http_error(e):
-    return jsonify(error = e.description), e.status_code
+    return jsonify(error = e.description), e.code
 
 @app.errorhandler(api.ReleaseGroupNotFoundException)
 async def handle_error(e):
