@@ -1,4 +1,4 @@
-name: build
+name: Build
 
 on:
   workflow_dispatch:
@@ -40,7 +40,6 @@ permissions:
 jobs:
   build_docker:
     name: Build Docker Image
-    if: ${{ !github.event.pull_request.head.repo.fork }}
     strategy:
       fail-fast: false
       matrix:
