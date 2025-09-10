@@ -2,6 +2,7 @@ import abc
 import collections
 import datetime
 import importlib.resources
+import sys
 from datetime import timedelta
 import time
 import pytz
@@ -19,6 +20,7 @@ import json
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 
+import lidarrmetadata
 from lidarrmetadata.config import get_config
 from lidarrmetadata import limit
 from lidarrmetadata import stats
@@ -459,9 +461,16 @@ class HttpProvider(Provider,
         if self._session is None:
             async with self._session_lock:
                 logger.debug("Initializing AIOHTTP Session")
-                
-                self._session = aiohttp.ClientSession(timeout = aiohttp.ClientTimeout(total=CONFIG.EXTERNAL_TIMEOUT / 1000))
-                
+
+                headers = {'User-Agent': "Mozilla/5.0 (Python/{0[0]}.{0[1]} aiohttp/{1}) MetadataAPI/{2}".format(
+                    sys.version_info, aiohttp.__version__, lidarrmetadata.__version__
+                )}
+
+                self._session = aiohttp.ClientSession(
+                    timeout=aiohttp.ClientTimeout(total=CONFIG.EXTERNAL_TIMEOUT / 1000),
+                    headers=headers
+                )
+
         return self._session
             
     async def _del(self):
