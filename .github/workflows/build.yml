@@ -12,6 +12,7 @@ on:
       - 'docker-compose.ya?ml'
       - 'Makefile'
       - 'LICENSE'
+      - 'requirements.txt'
       - '**.md'
 
   pull_request:
@@ -24,6 +25,7 @@ on:
       - 'docker-compose.ya?ml'
       - 'Makefile'
       - 'LICENSE'
+      - 'requirements.txt'
       - '**.md'
 
 concurrency:
