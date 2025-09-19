@@ -1,12 +1,14 @@
-[tool.poetry]
+[project]
 name = "lidarrmetadata"
 version = "0.1.0"
 description = "Lidarr metadata API"
-authors = ["Lidarr <development@lidarr.audio>"]
+authors = [
+  { name="Lidarr", email="development@lidarr.audio" },
+]
 readme = "README.rst"
+requires-python = ">=3.13,<4"
 
 [tool.poetry.dependencies]
-python = ">=3.13,<4"
 aiocache = "0.12.3"
 aiofiles = "0.6.0"
 aiohttp = "3.12.15"
