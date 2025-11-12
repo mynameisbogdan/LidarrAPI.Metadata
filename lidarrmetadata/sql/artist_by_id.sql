@@ -35,6 +35,7 @@ SELECT
                  JOIN artist_tag ON artist_tag.tag = tag.id
          WHERE artist_tag.artist = artist.id
            AND artist_tag.count > 0
+         ORDER BY artist_tag.count DESC
       ) AS Genres
       FROM artist
              LEFT JOIN artist_type ON artist.type = artist_type.id
