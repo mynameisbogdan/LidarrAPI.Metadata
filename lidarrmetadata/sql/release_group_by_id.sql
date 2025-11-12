@@ -73,6 +73,7 @@ SELECT
                  JOIN release_group_tag ON release_group_tag.tag = tag.id
          WHERE release_group_tag.release_group = release_group.id
            AND release_group_tag.count > 0
+         ORDER BY release_group_tag.count DESC
       ) AS Genres,
       (
 	SELECT
