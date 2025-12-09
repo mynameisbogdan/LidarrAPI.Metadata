@@ -550,7 +550,7 @@ class TheAudioDbProvider(HttpProvider,
 
         :param api_key: fanart.tv API key
         :param base_url: Base URL of API. Defaults to
-                         webservice.fanart.tv/v3/music
+                         theaudiodb.com/api/v1/json
         :param use_https: Whether or not to use https. Defaults to True.
         """
         super().__init__('tadb', session, limiter)
@@ -675,7 +675,7 @@ class FanArtTvProvider(HttpProvider,
                        InvalidateCacheMixin):
     def __init__(self,
                  api_key,
-                 base_url='webservice.fanart.tv/v3/music/',
+                 base_url='webservice.fanart.tv/v3/music',
                  use_https=True,
                  session=None,
                  limiter=None):
@@ -834,7 +834,7 @@ class FanArtTvProvider(HttpProvider,
         if url[-1] != '/':
             url += '/'
         url += mbid
-        url += '/?api_key={api_key}'.format(api_key=self._api_key)
+        url += '?api_key={api_key}'.format(api_key=self._api_key)
         return url
 
     @staticmethod
@@ -846,7 +846,7 @@ class FanArtTvProvider(HttpProvider,
         """
         images = {'Cover': util.first_key_item(response, 'albumcover'),
                   'Disc': util.first_key_item(response, 'cdart')}
-        return [{'CoverType': key, 'Url': value['url'].replace('https', 'http')}
+        return [{'CoverType': key, 'Url': value['url']}
                 for key, value in images.items() if value]
 
     @staticmethod
@@ -860,7 +860,7 @@ class FanArtTvProvider(HttpProvider,
                   'Fanart': util.first_key_item(response, 'artistbackground'),
                   'Logo': util.first_key_item(response, 'hdmusiclogo'),
                   'Poster': util.first_key_item(response, 'artistthumb')}
-        return [{'CoverType': key, 'Url': value['url'].replace('https', 'http')}
+        return [{'CoverType': key, 'Url': value['url']}
                 for key, value in images.items() if value]
 
 class SpotifyAuthProvider(HttpProvider,
