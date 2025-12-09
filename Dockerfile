@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM docker.io/library/python:3.13-alpine3.22
+FROM mirror.gcr.io/python:3.13-alpine3.24@sha256:399babc8b49529dabfd9c922f2b5eea81d611e4512e3ed250d75bd2e7683f4b0
 
 ARG COMMIT_HASH=''
 ARG GIT_BRANCH=''
