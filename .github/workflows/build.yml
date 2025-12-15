@@ -88,6 +88,7 @@ jobs:
           build-args: |
             GIT_BRANCH=${{ github.head_ref || github.ref_name }}
             COMMIT_HASH=${{ github.event.pull_request.head.sha || github.sha }}
+          provenance: false
 
       - name: Export image digest
         id: digest-prepare
