@@ -10,6 +10,7 @@
     "dockerfile",
     "github-actions",
     "poetry",
+    "mise",
   ],
   schedule: [
     "* * * * 6"
@@ -96,6 +97,11 @@
       commitMessageTopic: "poetry {{depName}}",
     },
     {
+      matchManagers: ["mise"],
+      semanticCommitScope: "mise",
+      commitMessageTopic: "tool {{depName}}",
+    },
+    {
       matchUpdateTypes: ["major"],
       labels: ["type/major"],
     },
@@ -124,9 +130,11 @@
       addLabels: ["renovate/python"],
     },
     {
-      description: ["Allowed python version as base image"],
-      matchDatasources: ["docker"],
-      matchFileNames: ["**/Dockerfile"],
+      description: ["Allowed python version"],
+      matchDatasources: [
+        "docker",
+        "github-tags",
+      ],
       matchPackageNames: ["/python/"],
       allowedVersions: "==3.13"
     },
