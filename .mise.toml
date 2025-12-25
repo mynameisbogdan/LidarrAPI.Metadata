@@ -3,4 +3,4 @@ _.python.venv = { path = ".venv", create = true }
 
 [tools]
 "core:python" = "3.13"
-"pipx:poetry" = "2"
+"pipx:poetry" = "2.2.1"
