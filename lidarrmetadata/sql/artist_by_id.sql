@@ -26,19 +26,21 @@ SELECT
       array(
         SELECT url.url
           FROM url
-                 JOIN l_artist_url ON l_artist_url.entity0 = artist.id AND l_artist_url.entity1 = url.id
+          JOIN l_artist_url ON l_artist_url.entity0 = artist.id AND l_artist_url.entity1 = url.id
+          JOIN link ON l_artist_url.link = link.id
+         WHERE NOT link.ended
       ) AS Links,
       array(
         SELECT INITCAP(genre.name)
           FROM genre
-                 JOIN tag ON genre.name = tag.name
-                 JOIN artist_tag ON artist_tag.tag = tag.id
+          JOIN tag ON genre.name = tag.name
+          JOIN artist_tag ON artist_tag.tag = tag.id
          WHERE artist_tag.artist = artist.id
            AND artist_tag.count > 0
          ORDER BY artist_tag.count DESC
       ) AS Genres
-      FROM artist
-             LEFT JOIN artist_type ON artist.type = artist_type.id
-             LEFT JOIN artist_meta ON artist.id = artist_meta.id
+     FROM artist
+     LEFT JOIN artist_type ON artist.type = artist_type.id
+     LEFT JOIN artist_meta ON artist.id = artist_meta.id
      WHERE artist.gid = ANY($1::uuid[])
   ) artist_data

@@ -64,7 +64,9 @@ SELECT
       array(
         SELECT url.url
           FROM url
-                 JOIN l_release_group_url ON l_release_group_url.entity0 = release_group.id AND l_release_group_url.entity1 = url.id
+          JOIN l_release_group_url ON l_release_group_url.entity0 = release_group.id AND l_release_group_url.entity1 = url.id
+          JOIN link ON l_release_group_url.link = link.id
+         WHERE NOT link.ended
       ) AS Links,
       array(
         SELECT INITCAP(genre.name)
@@ -118,16 +120,20 @@ SELECT
                   ) dates
               ) AS ReleaseDate,
               array(
-                SELECT name FROM label
-                                   JOIN release_label ON release_label.label = label.id
+                SELECT label.name
+                  FROM label
+                  JOIN release_label ON release_label.label = label.id
                  WHERE release_label.release = release.id
+                 AND NOT label.ended
                  ORDER BY name ASC
               ) AS Label,
               array(
-                SELECT name FROM area
-                                   JOIN country_area ON country_area.area = area.id
-                                   JOIN release_country ON release_country.country = country_area.area
+                SELECT area.name
+                  FROM area
+                  JOIN country_area ON country_area.area = area.id
+                  JOIN release_country ON release_country.country = country_area.area
                  WHERE release_country.release = release.id
+                 AND NOT area.ended
               ) AS Country,
               array(
                 SELECT json_build_object(
@@ -170,8 +176,8 @@ SELECT
                              JOIN recording ON track.recording = recording.id
                      WHERE medium.release = release.id
                        AND artist_credit_name.position = 0
-                       AND recording.video = FALSE
-                       AND track.is_data_track = FALSE
+                       AND NOT recording.video
+                       AND NOT track.is_data_track
                   ) track_data
               ) AS Tracks
               FROM release
