@@ -1,4 +1,4 @@
-SELECT artist.gid as mbid, substring(url.url from 33) as spotifyid
+SELECT artist.gid AS mbid, SUBSTRING(url.url from 33) AS spotifyid
 FROM artist
 JOIN l_artist_url on l_artist_url.entity0 = artist.id
 JOIN url on l_artist_url.entity1 = url.id
