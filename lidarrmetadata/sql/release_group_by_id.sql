@@ -7,14 +7,14 @@ SELECT
         SELECT gid
           FROM release_group_gid_redirect
          WHERE release_group_gid_redirect.new_id = release_group.id
-      ) as OldIds,
+      ) AS OldIds,
       release_group.comment AS Disambiguation,
       release_group.name AS Title,
       array(
         SELECT name
           FROM release_group_alias
          WHERE release_group_alias.release_group = release_group.id
-           AND (release_group_alias.type is NULL OR release_group_alias.type = 1)
+           AND (release_group_alias.type IS NULL OR release_group_alias.type = 1)
 
         UNION
 
@@ -22,7 +22,7 @@ SELECT
           FROM release
          WHERE release.release_group = release_group.id
            AND release.name != release_group.name
-      ) as Aliases,
+      ) AS Aliases,
       COALESCE(release_group_primary_type.name, 'Other') AS Type,
       array(
         SELECT name
@@ -35,7 +35,7 @@ SELECT
         release_group_meta.first_release_date_year,
         COALESCE(release_group_meta.first_release_date_month, 1),
         COALESCE(release_group_meta.first_release_date_day, 1)
-      ) as ReleaseDate,
+      ) AS ReleaseDate,
       artist.gid AS ArtistId,
       array(
 	SELECT DISTINCT
@@ -64,7 +64,9 @@ SELECT
       array(
         SELECT url.url
           FROM url
-                 JOIN l_release_group_url ON l_release_group_url.entity0 = release_group.id AND l_release_group_url.entity1 = url.id
+          JOIN l_release_group_url ON l_release_group_url.entity0 = release_group.id AND l_release_group_url.entity1 = url.id
+          JOIN link ON l_release_group_url.link = link.id
+         WHERE NOT link.ended
       ) AS Links,
       array(
         SELECT INITCAP(genre.name)
@@ -98,7 +100,7 @@ SELECT
                 SELECT gid
                   FROM release_gid_redirect
                  WHERE release_gid_redirect.new_id = release.id
-              ) as OldIds,
+              ) AS OldIds,
               release.name AS Title,
               release.comment AS Disambiguation,
               release_status.name AS Status,
@@ -118,16 +120,20 @@ SELECT
                   ) dates
               ) AS ReleaseDate,
               array(
-                SELECT name FROM label
-                                   JOIN release_label ON release_label.label = label.id
+                SELECT label.name
+                  FROM label
+                  JOIN release_label ON release_label.label = label.id
                  WHERE release_label.release = release.id
+                 AND NOT label.ended
                  ORDER BY name ASC
               ) AS Label,
               array(
-                SELECT name FROM area
-                                   JOIN country_area ON country_area.area = area.id
-                                   JOIN release_country ON release_country.country = country_area.area
+                SELECT area.name
+                  FROM area
+                  JOIN country_area ON country_area.area = area.id
+                  JOIN release_country ON release_country.country = country_area.area
                  WHERE release_country.release = release.id
+                 AND NOT area.ended
               ) AS Country,
               array(
                 SELECT json_build_object(
@@ -150,13 +156,13 @@ SELECT
                         SELECT gid
                           FROM track_gid_redirect
                          WHERE track_gid_redirect.new_id = track.id
-                      ) as OldIds,
+                      ) AS OldIds,
                       recording.gid AS RecordingId,
                       array(
                         SELECT gid
                           FROM recording_gid_redirect
                          WHERE recording_gid_redirect.new_id = recording.id
-                      ) as OldRecordingIds,
+                      ) AS OldRecordingIds,
                       artist.gid AS ArtistId,
                       track.name AS TrackName,
                       track.length AS DurationMs,
@@ -170,8 +176,8 @@ SELECT
                              JOIN recording ON track.recording = recording.id
                      WHERE medium.release = release.id
                        AND artist_credit_name.position = 0
-                       AND recording.video = FALSE
-                       AND track.is_data_track = FALSE
+                       AND NOT recording.video
+                       AND NOT track.is_data_track
                   ) track_data
               ) AS Tracks
               FROM release
