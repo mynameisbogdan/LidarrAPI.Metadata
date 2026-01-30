@@ -309,6 +309,7 @@ class DefaultConfig(six.with_metaclass(ConfigMeta, ConfigBase)):
             'cache': 'aiocache.RedisCache',
             'endpoint': REDIS_HOST,
             'port': REDIS_PORT,
+            'db': 0,
             'namespace': 'lm3.7',
             'serializer': {
                 'class': 'lidarrmetadata.cache.CompressionSerializer'
