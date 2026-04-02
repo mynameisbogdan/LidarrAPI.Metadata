@@ -3,5 +3,5 @@ _.python.venv = { path = ".venv", create = true }
 
 [tools]
 "core:python" = "3.13"
-"aqua:pypa/pipx" = "1.11.0"
+"aqua:pypa/pipx" = "1.11.1"
 "pipx:poetry" = "2.3.3"
