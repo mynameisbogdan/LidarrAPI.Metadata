@@ -12,9 +12,9 @@
     "poetry",
     "mise",
   ],
-  minimumReleaseAge: "7 days",
+  minimumReleaseAge: "14 days",
   schedule: [
-    "* * * * *"
+    "* * * * 5"
   ],
   suppressNotifications: [
     "prEditedNotification",
