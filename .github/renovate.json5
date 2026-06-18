@@ -12,9 +12,9 @@
     "poetry",
     "mise",
   ],
-  minimumReleaseAge: "14 days",
+  minimumReleaseAge: "3 days",
   schedule: [
-    "* * * * 5"
+    "* * 5 * *"
   ],
   suppressNotifications: [
     "prEditedNotification",
@@ -63,29 +63,29 @@
       matchUpdateTypes: ["major"],
       semanticCommitType: "feat",
       commitMessagePrefix: "{{semanticCommitType}}({{semanticCommitScope}})!:",
-      commitMessageExtra: "( {{currentVersion}} ➔ {{newVersion}} )",
+      commitMessageExtra: "({{currentVersion}} ➔ {{newVersion}})",
     },
     {
       matchUpdateTypes: ["minor"],
       semanticCommitType: "feat",
-      commitMessageExtra: "( {{currentVersion}} ➔ {{newVersion}} )",
+      commitMessageExtra: "({{currentVersion}} ➔ {{newVersion}})",
     },
     {
       matchUpdateTypes: ["patch"],
       semanticCommitType: "fix",
-      commitMessageExtra: "( {{currentVersion}} ➔ {{newVersion}} )",
+      commitMessageExtra: "({{currentVersion}} ➔ {{newVersion}})",
     },
     {
       matchUpdateTypes: ["digest"],
-      semanticCommitType: "chore",
-      commitMessageExtra: "( {{currentDigestShort}} ➔ {{newDigestShort}} )",
+      semanticCommitType: "fix",
+      commitMessageExtra: "({{currentDigestShort}} ➔ {{newDigestShort}})",
     },
     {
       matchDatasources: ["docker"],
       semanticCommitScope: "container",
       commitMessageTopic: "image {{depName}}",
     },
-    {
+   {
       matchManagers: ["github-actions"],
       semanticCommitType: "ci",
       semanticCommitScope: "github-action",
@@ -99,24 +99,25 @@
     },
     {
       matchManagers: ["mise"],
+      semanticCommitType: "chore",
       semanticCommitScope: "mise",
       commitMessageTopic: "tool {{depName}}",
     },
     {
       matchUpdateTypes: ["major"],
-      labels: ["type/major"],
+      addLabels: ["type/major"],
     },
     {
       matchUpdateTypes: ["minor"],
-      labels: ["type/minor"],
+      addLabels: ["type/minor"],
     },
     {
       matchUpdateTypes: ["patch"],
-      labels: ["type/patch"],
+      addLabels: ["type/patch"],
     },
     {
       matchUpdateTypes: ["digest"],
-      labels: ["type/digest"],
+      addLabels: ["type/digest"],
     },
     {
       matchDatasources: ["docker"],
