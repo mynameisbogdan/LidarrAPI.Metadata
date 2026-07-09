@@ -85,13 +85,11 @@ def response_url(url: str) -> str:
     for third-party services.
     """
     parsed = urlparse(url)
-    if parsed.netloc.endswith("theaudiodb.com"):
-        new_path = re.sub("^/images/media/", "", parsed.path)
+    parsed = parsed._replace(netloc=parsed.netloc.lower())
+
+    if (parsed.netloc.endswith("theaudiodb.com") and parsed.path.startswith("/images/media/")) or parsed.netloc.endswith("coverartarchive.org"):
         old_parsed = parsed
-        parsed = parsed._replace(
-            netloc=CONFIG.IMAGE_CACHE_HOST,
-            path=f"v1/tadb/{new_path}"
-        )
+        parsed = urlparse(f"http://{CONFIG.IMAGE_CACHE_HOST.rstrip("/")}/cache/{parsed.geturl()}")
         logger.debug(f"Transformed {old_parsed.geturl()} to {parsed.geturl()}")
     else:
         logger.debug(f"Leaving {parsed.geturl()} as is")
@@ -658,7 +656,7 @@ class TheAudioDbProvider(HttpProvider,
         }
         
         images = {k: response.get(v) for k, v in image_mapping.items()}
-        return [{'CoverType': key, 'Url': response_url(value)}
+        return [{'CoverType': key, 'Url': response_url(value), 'remoteUrl': value}
                 for key, value in images.items() if value]
 
     @staticmethod
@@ -1185,7 +1183,7 @@ class MusicbrainzDbProvider(Provider,
 
     @staticmethod
     def _build_caa_url(release_id, image_id):
-        return 'https://imagecache.lidarr.audio/v1/caa/{}/{}-1200.jpg'.format(release_id, image_id)
+        return 'https://coverartarchive.org/release/{}/{}-1200.jpg'.format(release_id, image_id)
     
     @classmethod
     def _load_artist(cls, data):
@@ -1220,7 +1218,7 @@ class MusicbrainzDbProvider(Provider,
                 cover_type = type_mapping.get(result['type'], None)
                 if cover_type is not None and cover_type not in art:
                     art[cover_type] = cls._build_caa_url(result['release_gid'], result['image_id'])
-            release_group['images'] = [{'CoverType': art_type, 'Url': url} for art_type, url in art.items()]
+            release_group['images'] = [{'CoverType': art_type, 'Url': response_url(url), 'remoteUrl': url} for art_type, url in art.items()]
         else:
             release_group['images'] = []
             

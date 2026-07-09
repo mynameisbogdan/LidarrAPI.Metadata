@@ -500,7 +500,7 @@ class DefaultConfig(six.with_metaclass(ConfigMeta, ConfigBase)):
     TESTING = False
 
     # Hosted cache for third-party images
-    IMAGE_CACHE_HOST = "imagecache.lidarr.audio"
+    IMAGE_CACHE_HOST = "images.lidarr.audio"
 
     # Number of concurrent connections for crawler
     FANART_CONNECTIONS = 1
