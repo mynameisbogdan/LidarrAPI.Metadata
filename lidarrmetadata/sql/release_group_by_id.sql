@@ -81,13 +81,15 @@ SELECT
 	SELECT
 	  json_agg(row_to_json(images_data))
 	  FROM (
-	    SELECT unnest(types) AS type,
-		   release.gid AS release_gid,
-		   index_listing.id AS image_id
-	      FROM cover_art_archive.index_listing
-		     JOIN release ON index_listing.release = release.id
+	    SELECT DISTINCT ON (type)
+	        unnest(types) AS type,
+		      release.gid AS release_gid,
+		      index_listing.id AS image_id
+	     FROM cover_art_archive.index_listing
+		   JOIN release ON index_listing.release = release.id
+		   FULL OUTER JOIN cover_art_archive.release_group_cover_art ON release_group_cover_art.release = release.id
 	     WHERE release.release_group = release_group.id
-	     ORDER BY index_listing.ordering ASC
+	     ORDER BY type, release_group_cover_art.release, index_listing.ordering ASC
 	  ) images_data
       ) AS images,
       (
