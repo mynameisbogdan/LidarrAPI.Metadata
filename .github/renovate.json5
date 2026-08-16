@@ -20,6 +20,11 @@
     "prEditedNotification",
     "prIgnoreNotification"
   ],
+  lockFileMaintenance: {
+    enabled: true,
+    commitMessageExtra: "({{manager}})",
+    additionalBranchPrefix: "{{manager}}-",
+  },
   registryAliases: {
     "mirror.gcr.io": "docker.io",
   },
