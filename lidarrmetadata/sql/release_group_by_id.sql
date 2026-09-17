@@ -87,9 +87,16 @@ SELECT
 		      index_listing.id AS image_id
 	     FROM cover_art_archive.index_listing
 		   JOIN release ON index_listing.release = release.id
+		   LEFT JOIN (
+		      SELECT release, date_year, date_month, date_day
+		      FROM musicbrainz.release_country
+		      UNION ALL
+		      SELECT release, date_year, date_month, date_day
+		      FROM musicbrainz.release_unknown_country
+		   ) release_event ON release_event.release = release.id
 		   FULL OUTER JOIN cover_art_archive.release_group_cover_art ON release_group_cover_art.release = release.id
 	     WHERE release.release_group = release_group.id
-	     ORDER BY type, release_group_cover_art.release, index_listing.ordering ASC
+	     ORDER BY type, release_group_cover_art.release, index_listing.ordering, release_event.date_year, release_event.date_month, release_event.date_day
 	  ) images_data
       ) AS images,
       (
