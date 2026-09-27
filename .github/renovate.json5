@@ -12,6 +12,7 @@
     "poetry",
     "mise",
   ],
+  minimumReleaseAgeBehaviour: "timestamp-optional",
   minimumReleaseAge: "3 days",
   schedule: [
     "* * 5 * *"
