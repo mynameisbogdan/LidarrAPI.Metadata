@@ -8,31 +8,20 @@ ARG GIT_BRANCH=''
 ENV COMMIT_HASH=$COMMIT_HASH \
     GIT_BRANCH=$GIT_BRANCH
 
-ENV POETRY_VIRTUALENVS_CREATE=false \
-    POETRY_NO_INTERACTION=1 \
-    POETRY_CACHE_DIR='/var/cache/pypoetry' \
-    POETRY_HOME='/usr/local'
-
 USER root
+WORKDIR /app
 
-WORKDIR /metadata
-COPY --chown=0:0 --chmod=755 . /metadata
+COPY --chown=0:0 --chmod=755 . /app
 
-RUN set -x; \
+RUN --mount=type=bind,from=ghcr.io/astral-sh/uv:0.13.6@sha256:af22a52f5eafef3d78e551599d405c02df61919d18028f0cea8eda93bc9986d0,source=/uv,target=/usr/local/bin/uv \
+    set -eux; \
     apk add --no-cache --upgrade \
         ca-certificates; \
-    apk add --no-cache --upgrade --virtual .build-deps \
-      gcc \
-      make \
-      musl-dev; \
-    pip --no-cache-dir install --upgrade pip setuptools; \
-    pip --disable-pip-version-check --no-cache-dir install "poetry~=2.0"; \
-    poetry install --only=main; \
-    apk --purge del .build-deps; \
-    rm -rf \
-      /var/cache/apk/* \
-      /var/cache/pypoetry/* \
-      /tmp/*;
+    uv build --no-cache --wheel; \
+    uv pip install --system dist/*.whl; \
+    chown -R root:root /app; \
+    chmod -R 755 /app; \
+    rm -rf /root/.cache /var/log/* /tmp/*;
 
 USER nobody:nogroup
 
