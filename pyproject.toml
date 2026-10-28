@@ -3,70 +3,72 @@ name = "lidarrmetadata"
 version = "0.1.0"
 description = "Lidarr metadata API"
 authors = [
-  { name="Lidarr", email="development@lidarr.audio" },
+  { name = "Lidarr", email = "development@lidarr.audio" },
 ]
 readme = "README.rst"
 requires-python = ">=3.13,<4"
 
-[tool.poetry.dependencies]
-aiocache = "0.12.3"
-aiofiles = "25.1.0"
-aiohttp = "3.14.5"
-async-timeout = "5.0.1"
-asyncpg = "0.32.0"
-attrs = "26.1.0"
-beautifulsoup4 = "4.15.0"
-billboard-py = "7.1.0"
-blinker = "1.9.0"
-certifi = "2026.10.19"
-chardet = "7.7.0"
-click = "8.5.0"
-flask = "3.1.3"
-gunicorn = "26.2.0"
-h11 = "0.16.0"
-h2 = "4.4.1"
-hiredis = "3.5.0"
-hpack = "4.2.0"
-httptools = "0.9.0"
-hypercorn = "0.18.0"
-hyperframe = "6.1.0"
-idna = "3.20"
-itsdangerous = "2.2.0"
-jinja2 = "3.1.6"
-markupsafe = "3.0.4"
-multidict = "7.1.0"
-priority = "2.0.0"
-pylast = "7.2.0"
-pytelegraf = "0.3.3"
-python-dateutil = "3.0.0"
-python-levenshtein = "0.27.5"
-pytz = "2026.5"
-quart = "0.23.1"
-redis = "8.1.0"
-requests = "2.34.2"
-sentry-sdk = "2.73.0"
-six = "1.17.0"
-soupsieve = "3.0.4"
-spotipy = "2.26.0"
-toml = "0.10.2"
-typing-extensions = "4.16.0"
-urllib3 = "2.8.0"
-uvicorn = "0.54.0"
-uvloop = "0.23.0"
-werkzeug = "3.1.9"
-wsproto = "1.3.2"
-yarl = "1.25.1"
+dependencies = [
+  "aiocache==0.12.3",
+  "aiofiles==25.1.0",
+  "aiohttp==3.14.5",
+  "async-timeout==5.0.1",
+  "asyncpg==0.32.0",
+  "attrs==26.1.0",
+  "beautifulsoup4==4.15.0",
+  "billboard-py==7.1.0",
+  "blinker==1.9.0",
+  "certifi==2026.10.19",
+  "chardet==7.7.0",
+  "click==8.5.0",
+  "flask==3.1.3",
+  "gunicorn==26.2.0",
+  "h11==0.16.0",
+  "h2==4.4.1",
+  "hiredis==3.5.0",
+  "hpack==4.2.0",
+  "httptools==0.9.0",
+  "hypercorn==0.18.0",
+  "hyperframe==6.1.0",
+  "idna==3.20",
+  "itsdangerous==2.2.0",
+  "jinja2==3.1.6",
+  "markupsafe==3.0.4",
+  "multidict==7.1.0",
+  "priority==2.0.0",
+  "pylast==7.2.0",
+  "pytelegraf==0.3.3",
+  "python-dateutil==3.0.0",
+  "python-levenshtein==0.27.5",
+  "pytz==2026.5",
+  "quart==0.23.1",
+  "redis==8.1.0",
+  "requests==2.34.2",
+  "sentry-sdk==2.73.0",
+  "six==1.17.0",
+  "soupsieve==3.0.4",
+  "spotipy==2.26.0",
+  "toml==0.10.2",
+  "typing-extensions==4.16.0",
+  "urllib3==2.8.0",
+  "uvicorn==0.54.0",
+  "uvloop==0.23.0",
+  "werkzeug==3.1.9",
+  "wsproto==1.3.2",
+  "yarl==1.25.1",
+]
 
-
-[tool.poetry.group.dev.dependencies]
-pytest = "^9.0.0"
-pytest-asyncio = "^1.0.0"
-mockredispy = "^2.9.3"
+[dependency-groups]
+dev = [
+  "pytest>=9.0.0,<10.0.0",
+  "pytest-asyncio>=1.0.0,<2.0.0",
+  "mockredispy>=2.9.3,<3.0.0",
+]
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.poetry.scripts]
+[project.scripts]
 lidarr-metadata-server = "lidarrmetadata.server:main"
 lidarr-metadata-crawler = "lidarrmetadata.crawler:main"

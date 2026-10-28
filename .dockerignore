@@ -17,6 +17,8 @@ wheels/
 .installed.cfg
 *.egg
 /venv*
+/.venv*
+.mise
 
 # Other docker stuff
 hooks/
@@ -30,6 +32,7 @@ appveyor.yml
 # Other stuff
 /.git
 /.tox
+tox.ini
 
 .DS_Store
 .dockerignore
