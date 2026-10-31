@@ -40,7 +40,7 @@ dependencies = [
   "pytelegraf==0.3.3",
   "python-dateutil==3.0.0",
   "python-levenshtein==0.27.5",
-  "pytz==2026.5",
+  "pytz==2026.6",
   "quart==0.23.1",
   "redis==8.1.0",
   "requests==2.34.2",
