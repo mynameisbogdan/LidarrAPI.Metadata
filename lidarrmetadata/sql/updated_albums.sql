@@ -49,3 +49,12 @@ FROM release_group
 JOIN l_release_group_url ON l_release_group_url.entity0 = release_group.id
 JOIN url ON l_release_group_url.entity1 = url.id
 WHERE url.last_updated > $1
+
+UNION
+
+SELECT DISTINCT release_group.gid
+FROM cover_art_archive.index_listing
+JOIN release ON index_listing.release = release.id
+JOIN release_group ON release_group.id = release.release_group
+WHERE index_listing.date_uploaded > $1
+AND index_listing.edits_pending = 0
