@@ -10,3 +10,4 @@ CREATE INDEX release_group_gid_redirect_idx_last_updated on release_group_gid_re
 CREATE INDEX l_artist_url_idx_last_updated on l_artist_url(last_updated);
 CREATE INDEX l_release_url_idx_last_updated on l_release_url(last_updated);
 CREATE INDEX l_release_group_url_idx_last_updated on l_release_group_url(last_updated);
+CREATE INDEX cover_art_idx_date_uploaded on cover_art_archive.cover_art(date_uploaded);
