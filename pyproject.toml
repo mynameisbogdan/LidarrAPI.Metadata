@@ -38,7 +38,7 @@ dependencies = [
   "priority==2.0.0",
   "pylast==7.2.0",
   "pytelegraf==0.3.3",
-  "python-dateutil==3.0.0",
+  "python-dateutil==4.0.0",
   "python-levenshtein==0.27.5",
   "pytz==2026.6",
   "quart==0.23.1",
