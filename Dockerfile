@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM mirror.gcr.io/python:3.13-alpine3.24@sha256:7984cf56ceaddebe4fefeb75d64000b9f45d8b77b11a09b24524da6cdc3af0c8
+FROM mirror.gcr.io/python:3.13-alpine3.24@sha256:1e1f6334529d1fb26a2ef619d7cffb30a7c7d7cc1cc7338ebee283a58d1aeaca
 
 ARG COMMIT_HASH=''
 ARG GIT_BRANCH=''
